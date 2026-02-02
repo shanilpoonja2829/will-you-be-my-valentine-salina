@@ -291,6 +291,17 @@
 
     /* ---------- YES CLICK ---------- */
     yesBtn.addEventListener("click", () => {
+  const music = document.getElementById("bgMusic");
+  music.volume = 0.6;
+  music.play();
+
+  zone.style.display = "none";
+  hint.style.display = "none";
+  result.style.display = "block";
+  resizeConfettiCanvas();
+  fullScreenConfetti();
+});
+
       zone.style.display = "none";
       hint.style.display = "none";     // HIDE THE HINT
       result.style.display = "block";
@@ -300,6 +311,7 @@
   </script>
 </body>
 </html>
+
 
 
 
