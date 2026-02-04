@@ -83,7 +83,6 @@ h1 {
   position: relative;
 }
 
-/* Wrapper for Yes button to allow scaling */
 #yesWrapper {
   display: inline-block;
   transition: transform 0.2s ease;
@@ -144,7 +143,6 @@ button {
   to   { transform: scale(1); opacity: 1; }
 }
 
-/* Floating hearts */
 .heart {
   position: fixed;
   pointer-events: none;
@@ -168,7 +166,8 @@ button {
 <audio id="bgMusic" src="music.mp3" preload="auto" loop></audio>
 
 <main class="card">
-  <h1>Salina, my jaan, will you be my Valentine?</h1>
+  <h1 id="questionTitle">Salina, my jaan, will you be my Valentine?</h1>
+  <!-- ▲ ADDITION: id only -->
 
   <section class="button-zone" id="zone">
     <div id="yesWrapper">
@@ -198,6 +197,7 @@ window.addEventListener('load', () => {
   const hint = document.getElementById("hint");
   const music = document.getElementById("bgMusic");
   const confettiCanvas = document.getElementById("confettiCanvas");
+  const questionTitle = document.getElementById("questionTitle"); // ✅ ADDITION
 
   const hints = [
     "Looks like “No” is shy like my Sallu 😈",
@@ -229,7 +229,6 @@ window.addEventListener('load', () => {
     setTimeout(()=>{h.remove();heartsCount--;},1200);
   }
 
-  /* ✅ ADDITION: heart burst on YES */
   function heartBurst(x, y) {
     for (let i = 0; i < 18; i++) {
       setTimeout(() => {
@@ -252,7 +251,6 @@ window.addEventListener('load', () => {
 
   const confettiInstance = confetti.create(confettiCanvas, {resize:false, useWorker:false});
 
-  /* ✅ ADDITION: stronger + longer confetti */
   function megaConfetti(){
     const end = Date.now() + 4500;
     (function frame(){
@@ -273,7 +271,6 @@ window.addEventListener('load', () => {
 
   zone.addEventListener("pointermove", e => {
     spawnHeart(e.clientX, e.clientY);
-
     const btnRect = noBtn.getBoundingClientRect();
     const distance = Math.hypot(
       e.clientX - (btnRect.left + btnRect.width/2),
@@ -282,7 +279,6 @@ window.addEventListener('load', () => {
 
     if(distance < 100){
       growYes();
-
       const zoneRect = zone.getBoundingClientRect();
       let dx = (btnRect.left + btnRect.width/2) - e.clientX;
       let dy = (btnRect.top + btnRect.height/2) - e.clientY;
@@ -323,6 +319,8 @@ window.addEventListener('load', () => {
       music.volume = Math.min(v,0.6);
       if(v>=0.6) clearInterval(fade);
     },80);
+
+    questionTitle.style.display = "none"; // ✅ ONLY NEW BEHAVIOR
 
     zone.style.display = "none";
     hint.style.display = "none";
