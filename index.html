@@ -29,9 +29,9 @@ body {
 .bg {
   position: fixed;
   inset: 0;
-  background-image: url('./Us.JPG'); /* make sure Us.JPG is in same folder */
+  background-image: url('./Us.JPG'); /* place Us.JPG in same folder */
   background-size: cover;
-  background-position: center 20%; /* shift down slightly to show heads */
+  background-position: center top; /* anchor to top to show heads */
   background-repeat: no-repeat;
   z-index: -2;
 }
@@ -94,7 +94,6 @@ button {
   left: 15%;
   background: var(--yes);
   color: #fff;
-  overflow: visible;
 }
 #yesBtn.pulsing {
   animation: yesPulse 1.2s ease-in-out infinite;
@@ -193,14 +192,14 @@ const hints = [
 ];
 let hintIndex = 0;
 
-// Start pulsing immediately
+// Start pulsing Yes
 yesBtn.classList.add("pulsing");
 
 // Yes growth
 let yesScale = 1;
-function growYes() {
-  yesScale = Math.min(2.5, yesScale + 0.03); // slower incremental growth
-  yesBtn.style.transform = `translateY(-50%) scale(${yesScale})`; // scale whole button
+function growYes(scaleStep = 0.05){
+  yesScale = Math.min(2.5, yesScale + scaleStep);
+  yesBtn.style.transform = `translateY(-50%) scale(${yesScale})`;
 }
 
 // Floating hearts
@@ -245,32 +244,33 @@ function megaConfetti(){
 // Clamp helper
 function clamp(n,min,max){return Math.max(min,Math.min(max,n));}
 
-// Handle pointer movement
+// Track pointer movement
 zone.addEventListener("pointermove", e => {
   spawnHeart(e.clientX, e.clientY);
 
+  const zoneRect = zone.getBoundingClientRect();
   const btnRect = noBtn.getBoundingClientRect();
-  const distance = Math.hypot(
-    e.clientX - (btnRect.left + btnRect.width / 2),
-    e.clientY - (btnRect.top + btnRect.height / 2)
-  );
 
-  // Dodge No button if cursor is close
-  if (distance < 100) {
-    const zoneRect = zone.getBoundingClientRect();
-    let dx = (btnRect.left + btnRect.width / 2) - e.clientX;
-    let dy = (btnRect.top + btnRect.height / 2) - e.clientY;
-    let mag = Math.hypot(dx, dy) || 1;
-    dx /= mag; dy /= mag;
+  const dx = e.clientX - (btnRect.left + btnRect.width/2);
+  const dy = e.clientY - (btnRect.top + btnRect.height/2);
+  const distance = Math.hypot(dx, dy);
 
-    let targetLeft = clamp((btnRect.left - zoneRect.left) + dx * 180, 0, zoneRect.width - btnRect.width);
-    let targetTop  = clamp((btnRect.top - zoneRect.top) + dy * 180, 0, zoneRect.height - btnRect.height);
+  if(distance < 120){ // proximity threshold
+    // Move No button away from cursor
+    let moveX = -dx*1.5;
+    let moveY = -dy*1.5;
+    let newLeft = clamp(btnRect.left - zoneRect.left + moveX, 0, zoneRect.width - btnRect.width);
+    let newTop  = clamp(btnRect.top - zoneRect.top + moveY, 0, zoneRect.height - btnRect.height);
 
-    noBtn.style.position = "absolute";
-    noBtn.style.left = targetLeft + "px";
-    noBtn.style.top = targetTop + "px";
+    noBtn.style.left = `${newLeft}px`;
+    noBtn.style.top  = `${newTop}px`;
 
-    growYes(); // yes button grows gradually
+    // Grow Yes button
+    growYes();
+    
+    // Update hint
+    hintIndex = Math.min(hintIndex+1, hints.length-1);
+    hint.textContent = hints[hintIndex];
   }
 });
 
