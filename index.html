@@ -29,7 +29,7 @@ body {
 .bg {
   position: fixed;
   inset: 0;
-  background-image: url('./us.jpg'); /* Make sure file path is correct */
+  background-image: url('./Us.JPG'); /* make sure Us.JPG is in same folder */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -99,13 +99,9 @@ button {
   color: #fff;
   overflow: visible;
 }
-#yesBtn span {
-  display: inline-block;
-}
-#yesBtn.pulsing span {
+#yesBtn.pulsing {
   animation: yesPulse 1.2s ease-in-out infinite;
 }
-
 @keyframes yesPulse {
   0%,100% { transform: scale(1); }
   50% { transform: scale(1.06); }
@@ -166,7 +162,7 @@ button {
   <h1>Salina, my jaan, will you be my Valentine?</h1>
 
   <section class="button-zone" id="zone">
-    <button id="yesBtn" aria-label="Yes, I will"><span>Yes</span></button>
+    <button id="yesBtn" aria-label="Yes, I will">Yes</button>
     <button id="noBtn" aria-label="No, I won't">No</button>
   </section>
 
@@ -184,7 +180,6 @@ button {
 <script>
 const zone = document.getElementById("zone");
 const yesBtn = document.getElementById("yesBtn");
-const yesSpan = yesBtn.querySelector("span");
 const noBtn = document.getElementById("noBtn");
 const result = document.getElementById("result");
 const hint = document.getElementById("hint");
@@ -206,8 +201,8 @@ yesBtn.classList.add("pulsing");
 // Yes growth
 let yesScale = 1;
 function growYes() {
-  yesScale = Math.min(2.5, yesScale + 0.15); 
-  yesSpan.style.transform = `scale(${yesScale})`;
+  yesScale = Math.min(2.5, yesScale + 0.15);
+  yesBtn.style.transform = `scale(${yesScale}`;
 }
 
 // Floating hearts
@@ -252,42 +247,44 @@ function megaConfetti(){
 // Clamp helper
 function clamp(n,min,max){return Math.max(min,Math.min(max,n));}
 
-// Track pointer for heart trail
-zone.addEventListener("pointermove", e=>{
-  spawnHeart(e.clientX,e.clientY);
-});
+// Handle pointer movement
+zone.addEventListener("pointermove", e => {
+  spawnHeart(e.clientX, e.clientY);
 
-// Smooth No button dodge
-zone.addEventListener("pointerdown", e=>{
-  hintIndex = Math.min(hintIndex+1,hints.length-1);
-  hint.textContent = hints[hintIndex];
-
-  const zoneRect = zone.getBoundingClientRect();
+  // No button dodge
   const btnRect = noBtn.getBoundingClientRect();
-  let dx = (btnRect.left + btnRect.width/2) - e.clientX;
-  let dy = (btnRect.top + btnRect.height/2) - e.clientY;
-  let mag = Math.hypot(dx, dy) || 1;
-  dx /= mag; dy /= mag;
+  const distance = Math.hypot(
+    e.clientX - (btnRect.left + btnRect.width / 2),
+    e.clientY - (btnRect.top + btnRect.height / 2)
+  );
 
-  let targetLeft = clamp((btnRect.left - zoneRect.left) + dx * 180, 0, zoneRect.width - btnRect.width);
-  let targetTop  = clamp((btnRect.top - zoneRect.top) + dy * 180, 0, zoneRect.height - btnRect.height);
+  if (distance < 100) { // dodge threshold
+    const zoneRect = zone.getBoundingClientRect();
+    let dx = (btnRect.left + btnRect.width/2) - e.clientX;
+    let dy = (btnRect.top + btnRect.height/2) - e.clientY;
+    let mag = Math.hypot(dx, dy) || 1;
+    dx /= mag; dy /= mag;
 
-  noBtn.style.position = "absolute"; // temporarily absolute for smooth movement
+    let targetLeft = clamp((btnRect.left - zoneRect.left) + dx * 180, 0, zoneRect.width - btnRect.width);
+    let targetTop  = clamp((btnRect.top - zoneRect.top) + dy * 180, 0, zoneRect.height - btnRect.height);
 
-  const startLeft = parseFloat(noBtn.style.left || 0);
-  const startTop  = parseFloat(noBtn.style.top || 0);
-  const duration = 300; // 0.3s
-  const startTime = performance.now();
+    noBtn.style.position = "absolute";
 
-  function animate(time) {
-    const t = Math.min(1, (time - startTime) / duration);
-    noBtn.style.left = startLeft + (targetLeft - startLeft) * t + "px";
-    noBtn.style.top  = startTop  + (targetTop  - startTop)  * t + "px";
-    if(t < 1) requestAnimationFrame(animate);
+    const startLeft = parseFloat(noBtn.style.left || 0);
+    const startTop  = parseFloat(noBtn.style.top || 0);
+    const duration = 200;
+    const startTime = performance.now();
+
+    function animate(time) {
+      const t = Math.min(1, (time - startTime) / duration);
+      noBtn.style.left = startLeft + (targetLeft - startLeft) * t + "px";
+      noBtn.style.top  = startTop  + (targetTop  - startTop)  * t + "px";
+      if (t < 1) requestAnimationFrame(animate);
+    }
+    requestAnimationFrame(animate);
+
+    growYes(); // yes button grows when No dodges
   }
-  requestAnimationFrame(animate);
-
-  growYes();
 });
 
 // Yes click
