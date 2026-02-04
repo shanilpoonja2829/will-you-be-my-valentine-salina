@@ -1,11 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Salina, my jaan, will you be my Valentine?</title>
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
-<style>
 :root {
   --bg1: #ffd6e7;
   --bg2: #ffeef6;
@@ -19,19 +11,19 @@ body {
   min-height: 100svh;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start; /* move content from perfect center to slightly lower */
+  padding: 16px;
   font-family: system-ui, sans-serif;
   overflow: hidden;
-  padding: 16px;
   background: #ffeef6;
 }
 
 .bg {
   position: fixed;
   inset: 0;
-  background-image: url('./Us.JPG'); /* make sure Us.JPG is in same folder */
+  background-image: url('./Us.JPG');
   background-size: cover;
-  background-position: center 39%; /* slightly higher */
+  background-position: center 39%;
   background-repeat: no-repeat;
   z-index: -2;
 }
@@ -55,7 +47,8 @@ body {
 
 .card {
   width: min(900px, 92vw);
-  padding: 32px 28px;
+  padding: 24px 28px; /* slightly smaller vertical padding */
+  margin-top: 60px;   /* moves the card lower on the page */
   background: var(--card);
   backdrop-filter: blur(10px);
   border-radius: 22px;
@@ -74,7 +67,7 @@ h1 {
   justify-content: space-around;
   align-items: center;
   width: 100%;
-  height: 170px;
+  height: 150px; /* slightly shorter than before */
   margin: 0 auto;
   touch-action: none;
   position: relative;
@@ -90,7 +83,7 @@ button {
   cursor: pointer;
   box-shadow: 0 10px 24px rgba(0,0,0,.14);
   user-select: none;
-  transition: transform 0.2s ease, left 0.3s ease, top 0.3s ease; /* smooth scaling */
+  transition: transform 0.2s ease, left 0.3s ease, top 0.3s ease;
   white-space: nowrap;
 }
 
@@ -135,7 +128,6 @@ button {
   to   { transform: scale(1); opacity: 1; }
 }
 
-/* Floating hearts */
 .heart {
   position: fixed;
   pointer-events: none;
@@ -149,167 +141,3 @@ button {
   from { transform: translate(-50%,-50%) scale(1); opacity: 1; }
   to   { transform: translate(-50%,-120%) scale(1.6); opacity: 1; }
 }
-</style>
-</head>
-<body>
-<div class="bg"></div>
-<div class="bg-gradient"></div>
-<canvas id="confettiCanvas"></canvas>
-
-<audio id="bgMusic" src="music.mp3" preload="auto" loop></audio>
-
-<main class="card">
-  <h1>Salina, my jaan, will you be my Valentine?</h1>
-
-  <section class="button-zone" id="zone">
-    <button id="yesBtn" aria-label="Yes, I will">Yes</button>
-    <button id="noBtn" aria-label="No, I won't">No</button>
-  </section>
-
-  <div class="hint" id="hint">Looks like “No” is shy like my Sallu 😈</div>
-
-  <section class="result" id="result" aria-live="polite">
-    <h2>YAY, BABY! 💖</h2>
-    <p class="love-note">
-      You make the ordinary feel magical. Every smile, every moment - I want to choose you, always. So this is the part where I smile like an idiot because you said yes 💕
-    </p>
-    <img src="https://media.giphy.com/media/3rgXBxX4myufzT6N2w/giphy.gif" alt="Celebration" style="width:90%;max-width:360px;margin-top:10px">
-  </section>
-</main>
-
-<script>
-const zone = document.getElementById("zone");
-const yesBtn = document.getElementById("yesBtn");
-const noBtn = document.getElementById("noBtn");
-const result = document.getElementById("result");
-const hint = document.getElementById("hint");
-const music = document.getElementById("bgMusic");
-const confettiCanvas = document.getElementById("confettiCanvas");
-
-const hints = [
-  "Looks like “No” is shy like my Sallu 😈",
-  "Still running away, huh? 😏",
-  "Okay now you’re teasing 💕",
-  "At this point it’s destiny 💘",
-  "Just say yes already 😌"
-];
-let hintIndex = 0;
-
-// Start pulsing immediately
-yesBtn.classList.add("pulsing");
-
-// Yes growth
-let yesScale = 1;
-function growYes() {
-  yesScale = Math.min(2.5, yesScale + 0.15); // increases each time
-  yesBtn.style.transform = `scale(${yesScale})`;
-}
-
-// Floating hearts
-let heartsCount = 0;
-function spawnHeart(x,y){
-  if(heartsCount>30) return;
-  heartsCount++;
-  const h=document.createElement("div");
-  h.className="heart";
-  h.textContent = Math.random()>0.5?"💖":"💕";
-  h.style.left=x+"px";
-  h.style.top=y+"px";
-  document.body.appendChild(h);
-  setTimeout(()=>{h.remove();heartsCount--;},1200);
-}
-
-// Confetti setup
-function resizeConfetti(){
-  const dpr=devicePixelRatio||1;
-  confettiCanvas.width=innerWidth*dpr;
-  confettiCanvas.height=innerHeight*dpr;
-  confettiCanvas.getContext("2d").setTransform(dpr,0,0,dpr,0,0);
-}
-resizeConfetti();
-addEventListener("resize",resizeConfetti);
-const confettiInstance = confetti.create(confettiCanvas,{resize:false,useWorker:true});
-function megaConfetti(){
-  const end=Date.now()+3000;
-  (function frame(){
-    confettiInstance({
-      particleCount:18,
-      spread:120,
-      startVelocity:55,
-      shapes:["heart"],
-      colors:["#ff4d7d","#ff1f68","#ff9bb8","#ffd1dc"],
-      origin:{x:Math.random(),y:Math.random()*0.4}
-    });
-    if(Date.now()<end) requestAnimationFrame(frame);
-  })();
-}
-
-// Clamp helper
-function clamp(n,min,max){return Math.max(min, Math.min(max,n));}
-
-// Pointer movement (hearts + No dodge + Yes growth)
-zone.addEventListener("pointermove", e => {
-  spawnHeart(e.clientX, e.clientY);
-
-  const btnRect = noBtn.getBoundingClientRect();
-  const distance = Math.hypot(
-    e.clientX - (btnRect.left + btnRect.width/2),
-    e.clientY - (btnRect.top + btnRect.height/2)
-  );
-
-  if (distance < 100) {
-    growYes(); // Yes grows each time cursor approaches No
-
-    // dodge No button
-    const zoneRect = zone.getBoundingClientRect();
-    let dx = (btnRect.left + btnRect.width/2) - e.clientX;
-    let dy = (btnRect.top + btnRect.height/2) - e.clientY;
-    let mag = Math.hypot(dx, dy) || 1;
-    dx /= mag; dy /= mag;
-
-    let targetLeft = clamp((btnRect.left - zoneRect.left) + dx * 180, 0, zoneRect.width - btnRect.width);
-    let targetTop  = clamp((btnRect.top - zoneRect.top) + dy * 180, 0, zoneRect.height - btnRect.height);
-
-    noBtn.style.position = "absolute";
-
-    const startLeft = parseFloat(noBtn.style.left || 0);
-    const startTop  = parseFloat(noBtn.style.top || 0);
-    const duration = 200;
-    const startTime = performance.now();
-
-    function animate(time) {
-      const t = Math.min(1, (time - startTime) / duration);
-      noBtn.style.left = startLeft + (targetLeft - startLeft) * t + "px";
-      noBtn.style.top  = startTop  + (targetTop  - startTop)  * t + "px";
-      if (t < 1) requestAnimationFrame(animate);
-    }
-    requestAnimationFrame(animate);
-  }
-});
-
-// No hover updates hint & grows Yes
-noBtn.addEventListener("mouseenter", () => {
-  hintIndex = Math.min(hints.length - 1, hintIndex + 1);
-  hint.textContent = hints[hintIndex];
-  growYes();
-});
-
-// Yes click
-yesBtn.addEventListener("click", async ()=>{
-  if("vibrate" in navigator) navigator.vibrate(100);
-  try{music.volume=0; await music.play();}catch{}
-  let v=0;
-  const fade=setInterval(()=>{
-    v+=0.05;
-    music.volume=Math.min(v,0.6);
-    if(v>=0.6) clearInterval(fade);
-  },80);
-  zone.style.display="none";
-  hint.style.display="none";
-  result.style.display="block";
-  resizeConfetti();
-  megaConfetti();
-});
-</script>
-</body>
-</html>
