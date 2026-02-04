@@ -9,7 +9,7 @@
 :root {
   --bg1: #ffd6e7;
   --bg2: #ffeef6;
-  --card: rgba(255,255,255,0.85);
+  --card: rgba(255,255,255,0.6); /* more transparent */
   --yes: #ff3b7a;
 }
 
@@ -31,7 +31,7 @@ body {
   inset: 0;
   background-image: url('./Us.JPG'); /* make sure Us.JPG is in same folder */
   background-size: cover;
-  background-position: center;
+  background-position: top center; /* shift focus to top */
   background-repeat: no-repeat;
   z-index: -2;
 }
@@ -90,7 +90,7 @@ button {
   cursor: pointer;
   box-shadow: 0 10px 24px rgba(0,0,0,.14);
   user-select: none;
-  transition: transform 0.15s ease, left 0.3s ease, top 0.3s ease;
+  transition: transform 0.2s ease, left 0.3s ease, top 0.3s ease; /* smooth scaling */
   white-space: nowrap;
 }
 
@@ -202,7 +202,7 @@ yesBtn.classList.add("pulsing");
 let yesScale = 1;
 function growYes() {
   yesScale = Math.min(2.5, yesScale + 0.15);
-  yesBtn.style.transform = `scale(${yesScale}`;
+  yesBtn.style.transform = `scale(${yesScale})`; // fixed
 }
 
 // Floating hearts
@@ -245,9 +245,9 @@ function megaConfetti(){
 }
 
 // Clamp helper
-function clamp(n,min,max){return Math.max(min,Math.min(max,n));}
+function clamp(n,min,max){return Math.max(min, Math.min(max,n));}
 
-// Handle pointer movement
+// Handle pointer movement (spawn hearts & dodge No button)
 zone.addEventListener("pointermove", e => {
   spawnHeart(e.clientX, e.clientY);
 
@@ -285,6 +285,13 @@ zone.addEventListener("pointermove", e => {
 
     growYes(); // yes button grows when No dodges
   }
+});
+
+// Handle No button click attempts (update hint & dodge)
+noBtn.addEventListener("mouseenter", () => {
+  // update hint only when user attempts to interact
+  hintIndex = Math.min(hints.length - 1, hintIndex + 1);
+  hint.textContent = hints[hintIndex];
 });
 
 // Yes click
