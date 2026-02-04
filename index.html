@@ -22,7 +22,12 @@ body {
   min-height: 100svh;
   display: grid;
   place-items: center;
-  background: radial-gradient(circle at top, var(--bg2), var(--bg1));
+
+  /* Background gradient + image */
+  background: 
+    radial-gradient(circle at top, var(--bg2), var(--bg1)),
+    url('us.jpg') center/cover no-repeat;
+  background-blend-mode: lighten; /* blend gradient and photo nicely */
   font-family: system-ui, sans-serif;
   overflow: hidden;
   padding: 16px;
@@ -38,7 +43,7 @@ body {
 .card {
   width: min(720px, 92vw);
   padding: 26px 22px;
-  background: var(--card);
+  background: rgba(255,255,255,0.85); /* slightly transparent to show background */
   backdrop-filter: blur(10px);
   border-radius: 22px;
   text-align: center;
@@ -77,15 +82,40 @@ button {
   left: 15%;
   background: var(--yes);
   color: #fff;
+  overflow: visible;
 }
 
+/* Pulsing animation */
 #yesBtn.pulsing {
   animation: yesPulse 1.2s ease-in-out infinite;
 }
 
+/* Pulse keyframes */
 @keyframes yesPulse {
   0%, 100% { transform: translateY(-50%) scale(1); }
   50%      { transform: translateY(-50%) scale(1.06); }
+}
+
+/* Sparkles behind Yes button */
+#yesBtn::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 120%;
+  height: 120%;
+  background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
+  transform: translate(-50%, -50%) scale(0);
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0.8;
+  animation: sparkle 1.2s ease-in-out infinite;
+}
+
+/* Sparkle animation */
+@keyframes sparkle {
+  0%, 100% { transform: translate(-50%, -50%) scale(0); opacity: 0.4; }
+  50%      { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; }
 }
 
 #noBtn {
@@ -255,7 +285,7 @@ zone.addEventListener("pointermove", e => {
   spawnHeart(e.clientX, e.clientY); // floating heart trail
 });
 
-// Move No button when user tries to click it
+// Move No button when user clicks near it
 function moveNo(clickX, clickY) {
   const zoneRect = zone.getBoundingClientRect();
   const btnRect = noBtn.getBoundingClientRect();
