@@ -9,7 +9,7 @@
 :root {
   --bg1: #ffd6e7;
   --bg2: #ffeef6;
-  --card: rgba(255,255,255,0.4); /* more transparent */
+  --card: rgba(255,255,255,0.25); /* more transparent */
   --yes: #ff3b7a;
 }
 
@@ -31,7 +31,7 @@ body {
   inset: 0;
   background-image: url('./Us.JPG'); /* make sure Us.JPG is in same folder */
   background-size: cover;
-  background-position: center 25%; /* slightly shifted down */
+  background-position: center 15%; /* slightly shifted down */
   background-repeat: no-repeat;
   z-index: -2;
 }
@@ -201,8 +201,8 @@ yesBtn.classList.add("pulsing");
 // Yes growth
 let yesScale = 1;
 function growYes() {
-  yesScale = Math.min(2.5, yesScale + 0.1); // smaller increments for smooth growth
-  yesBtn.style.transform = `scale(${yesScale})`; 
+  yesScale = Math.min(2.5, yesScale + 0.1); // slow incremental growth
+  yesBtn.style.transform = `scale(${yesScale})`;
 }
 
 // Floating hearts
@@ -251,14 +251,17 @@ function clamp(n,min,max){return Math.max(min, Math.min(max,n));}
 zone.addEventListener("pointermove", e => {
   spawnHeart(e.clientX, e.clientY);
 
-  // No button dodge
   const btnRect = noBtn.getBoundingClientRect();
   const distance = Math.hypot(
-    e.clientX - (btnRect.left + btnRect.width / 2),
-    e.clientY - (btnRect.top + btnRect.height / 2)
+    e.clientX - (btnRect.left + btnRect.width/2),
+    e.clientY - (btnRect.top + btnRect.height/2)
   );
 
-  if (distance < 100) { // dodge threshold
+  if (distance < 100) {
+    // Yes button grows as user approaches No
+    growYes();
+
+    // dodge No button
     const zoneRect = zone.getBoundingClientRect();
     let dx = (btnRect.left + btnRect.width/2) - e.clientX;
     let dy = (btnRect.top + btnRect.height/2) - e.clientY;
