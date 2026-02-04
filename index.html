@@ -9,7 +9,7 @@
 :root {
   --bg1: #ffd6e7;
   --bg2: #ffeef6;
-  --card: rgba(255,255,255,0.25); /* more transparent */
+  --card: rgba(255,255,255,0.18); /* more transparent */
   --yes: #ff3b7a;
 }
 
@@ -31,7 +31,7 @@ body {
   inset: 0;
   background-image: url('./Us.JPG'); /* make sure Us.JPG is in same folder */
   background-size: cover;
-  background-position: center 15%; /* slightly shifted down */
+  background-position: center 40%; /* slightly higher */
   background-repeat: no-repeat;
   z-index: -2;
 }
@@ -90,7 +90,7 @@ button {
   cursor: pointer;
   box-shadow: 0 10px 24px rgba(0,0,0,.14);
   user-select: none;
-  transition: transform 0.2s ease, left 0.3s ease, top 0.3s ease; /* smooth scale */
+  transition: transform 0.2s ease, left 0.3s ease, top 0.3s ease; /* smooth scaling */
   white-space: nowrap;
 }
 
@@ -201,7 +201,7 @@ yesBtn.classList.add("pulsing");
 // Yes growth
 let yesScale = 1;
 function growYes() {
-  yesScale = Math.min(2.5, yesScale + 0.1); // slow incremental growth
+  yesScale = Math.min(2.5, yesScale + 0.15); // increases each time
   yesBtn.style.transform = `scale(${yesScale})`;
 }
 
@@ -247,7 +247,7 @@ function megaConfetti(){
 // Clamp helper
 function clamp(n,min,max){return Math.max(min, Math.min(max,n));}
 
-// Handle pointer movement (spawn hearts & dodge No button)
+// Pointer movement (hearts + No dodge + Yes growth)
 zone.addEventListener("pointermove", e => {
   spawnHeart(e.clientX, e.clientY);
 
@@ -258,8 +258,7 @@ zone.addEventListener("pointermove", e => {
   );
 
   if (distance < 100) {
-    // Yes button grows as user approaches No
-    growYes();
+    growYes(); // Yes grows each time cursor approaches No
 
     // dodge No button
     const zoneRect = zone.getBoundingClientRect();
@@ -288,13 +287,10 @@ zone.addEventListener("pointermove", e => {
   }
 });
 
-// Handle No button hover (update hint and grow Yes)
+// No hover updates hint & grows Yes
 noBtn.addEventListener("mouseenter", () => {
-  // update hint only on hover
   hintIndex = Math.min(hints.length - 1, hintIndex + 1);
   hint.textContent = hints[hintIndex];
-
-  // grow Yes button
   growYes();
 });
 
