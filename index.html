@@ -14,33 +14,34 @@
   --yes: #ff3b7a;
 }
 
-* { box-sizing: border-box; margin:0; padding:0; }
+* { box-sizing: border-box; }
 
 body {
-  min-height: 100svh;
-  display: grid;
-  place-items: center;
+  margin:0;
+  min-height:100svh;
+  display:grid;
+  place-items:center;
   font-family: system-ui, sans-serif;
-  overflow: hidden;
-  background: url('us.jpg') center/cover no-repeat;
+  overflow:hidden;
   position: relative;
+  background: url('us.jpg') center/cover no-repeat;
 }
 
 body::before {
-  content: "";
+  content:"";
   position: fixed;
-  inset: 0;
+  inset:0;
   background: radial-gradient(circle at top, var(--bg2), var(--bg1));
-  opacity: 0.5;
-  pointer-events: none;
-  z-index: 0;
+  opacity:0.4;
+  pointer-events:none;
+  z-index:0;
 }
 
 #confettiCanvas {
   position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9999;
+  inset:0;
+  pointer-events:none;
+  z-index:9999;
 }
 
 .card {
@@ -64,72 +65,80 @@ h1 {
   position: relative;
   width: min(520px, 92%);
   height: 170px;
-  margin: 0 auto;
+  margin:0 auto;
 }
 
 button {
   position: absolute;
-  top: 50%;
+  top:50%;
   transform: translateY(-50%) scale(1);
-  padding: 16px 26px;
-  font-size: 18px;
-  font-weight: 800;
-  border-radius: 999px;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 10px 24px rgba(0,0,0,.14);
-  user-select: none;
+  padding:16px 26px;
+  font-size:18px;
+  font-weight:800;
+  border-radius:999px;
+  border:none;
+  cursor:pointer;
+  box-shadow:0 10px 24px rgba(0,0,0,.14);
+  user-select:none;
   transition: transform 0.15s ease;
 }
 
-#yesBtn {
+#yesWrapper {
+  position: absolute;
   left: 15%;
-  background: var(--yes);
-  color: #fff;
+  top: 50%;
+  transform: translateY(-50%) scale(1);
 }
 
-#yesBtn.pulsing {
+#yesBtn {
+  display:block;
+  width:100%;
+  background: var(--yes);
+  color:#fff;
+  border-radius:999px;
+  padding:16px 26px;
+  font-size:18px;
+  font-weight:800;
+  cursor:pointer;
   animation: yesPulse 1.2s ease-in-out infinite;
 }
 
 @keyframes yesPulse {
-  0%,100% { transform: translateY(-50%) scale(1); }
-  50% { transform: translateY(-50%) scale(1.06); }
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
 }
 
 #noBtn {
   left: 60%;
-  background: #e5e7eb;
-  color: #111827;
+  top: 50%;
+  background:#e5e7eb;
+  color:#111827;
 }
 
 .hint {
-  margin-top: 10px;
-  font-size: 13px;
-  opacity: .75;
+  margin-top:10px;
+  font-size:13px;
+  opacity:0.75;
 }
 
 .result {
-  display: none;
-  margin-top: 18px;
+  display:none;
+  margin-top:18px;
   animation: pop .4s ease;
 }
 
 .love-note {
-  font-size: 18px;
-  margin-top: 12px;
-  line-height: 1.5;
+  font-size:18px;
+  margin-top:12px;
+  line-height:1.5;
 }
 
-@keyframes pop {
-  from { transform: scale(.96); opacity:0; }
-  to { transform: scale(1); opacity:1; }
-}
+@keyframes pop { from{transform:scale(.96);opacity:0} to{transform:scale(1);opacity:1} }
 
 .heart {
   position: fixed;
   pointer-events: none;
-  font-size: 18px;
+  font-size:18px;
   animation: floatUp 1s ease forwards;
 }
 
@@ -139,55 +148,54 @@ button {
 }
 </style>
 </head>
+
 <body>
 <canvas id="confettiCanvas"></canvas>
 <audio id="bgMusic" src="music.mp3" preload="auto" loop></audio>
 
 <main class="card">
-  <h1>Salina, my jaan, will you be my Valentine?</h1>
-  <section class="button-zone" id="zone">
-    <button id="yesBtn" aria-label="Yes, I will">Yes</button>
-    <button id="noBtn" aria-label="No, I won't">No</button>
-  </section>
-  <div class="hint" id="hint">Looks like “No” is shy like my Sallu 😈</div>
-  <section class="result" id="result" aria-live="polite">
-    <h2>YAY, BABY! 💖</h2>
-    <p class="love-note">
-      You make the ordinary feel magical. Every smile, every moment - I want to choose you, always. So this is the part where I smile like an idiot because you said yes 💕
-    </p>
-    <img src="https://media.giphy.com/media/3rgXBxX4myufzT6N2w/giphy.gif" alt="Celebration" style="width:90%;max-width:360px;margin-top:10px"/>
-  </section>
+<h1>Salina, my jaan, will you be my Valentine?</h1>
+
+<section class="button-zone" id="zone">
+  <div id="yesWrapper"><button id="yesBtn" aria-label="Yes, I will">Yes</button></div>
+  <button id="noBtn" aria-label="No, I won't">No</button>
+</section>
+
+<div class="hint" id="hint">Looks like “No” is shy like my Sallu 😈</div>
+
+<section class="result" id="result" aria-live="polite">
+  <h2>YAY, BABY! 💖</h2>
+  <p class="love-note">
+    You make the ordinary feel magical. Every smile, every moment - I want to choose you, always. So this is the part where I smile like an idiot because you said yes 💕
+  </p>
+  <img src="https://media.giphy.com/media/3rgXBxX4myufzT6N2w/giphy.gif" alt="Celebration" style="width:90%;max-width:360px;margin-top:10px"/>
+</section>
 </main>
 
 <script>
-const zone = document.getElementById("zone");
-const yesBtn = document.getElementById("yesBtn");
-const noBtn = document.getElementById("noBtn");
-const result = document.getElementById("result");
-const hint = document.getElementById("hint");
-const music = document.getElementById("bgMusic");
-const confettiCanvas = document.getElementById("confettiCanvas");
+const zone=document.getElementById("zone");
+const yesBtn=document.getElementById("yesBtn");
+const yesWrapper=document.getElementById("yesWrapper");
+const noBtn=document.getElementById("noBtn");
+const hint=document.getElementById("hint");
+const result=document.getElementById("result");
+const music=document.getElementById("bgMusic");
+const confettiCanvas=document.getElementById("confettiCanvas");
 
-yesBtn.classList.add("pulsing");
+let yesScale=1;
+function growYes(){ yesScale=Math.min(2.5,yesScale+0.15); yesWrapper.style.transform=`translateY(-50%) scale(${yesScale})`; }
 
-let yesScale = 1;
-function growYes() {
-  yesScale = Math.min(2.5, yesScale+0.15);
-  yesBtn.style.transform = `translateY(-50%) scale(${yesScale})`;
-}
-
-// Hearts
-let heartsCount = 0;
+let heartsCount=0;
 function spawnHeart(x,y){
   if(heartsCount>30) return;
   heartsCount++;
   const h=document.createElement("div");
   h.className="heart";
-  h.textContent = Math.random()>0.5?"💖":"💕";
+  h.textContent=Math.random()>0.5?"💖":"💕";
   h.style.left=x+"px";
   h.style.top=y+"px";
   document.body.appendChild(h);
-  setTimeout(()=>{ h.remove(); heartsCount--; },1000);
+  setTimeout(()=>{h.remove();heartsCount--;},1000);
 }
 
 // Confetti
@@ -197,19 +205,11 @@ function resizeConfetti(){
   confettiCanvas.height=innerHeight*dpr;
   confettiCanvas.getContext("2d").setTransform(dpr,0,0,dpr,0,0);
 }
-resizeConfetti();
-addEventListener("resize", resizeConfetti);
-
+resizeConfetti(); addEventListener("resize",resizeConfetti);
 const confettiInstance=confetti.create(confettiCanvas,{resize:false,useWorker:true});
-function megaConfetti(){
-  const end=Date.now()+3000;
-  (function frame(){
-    confettiInstance({particleCount:18,spread:120,startVelocity:55,shapes:["heart"],colors:["#ff4d7d","#ff1f68","#ff9bb8","#ffd1dc"],origin:{x:Math.random(),y:Math.random()*0.4}});
-    if(Date.now()<end) requestAnimationFrame(frame);
-  })();
-}
+function megaConfetti(){ const end=Date.now()+3000; (function frame(){ confettiInstance({particleCount:18,spread:120,startVelocity:55,shapes:["heart"],colors:["#ff4d7d","#ff1f68","#ff9bb8","#ffd1dc"],origin:{x:Math.random(),y:Math.random()*0.4}}); if(Date.now()<end) requestAnimationFrame(frame); })(); }
 
-// Move No button
+// Move No
 function clamp(n,min,max){return Math.max(min,Math.min(max,n));}
 function moveNo(x,y){
   const zoneRect=zone.getBoundingClientRect();
@@ -218,22 +218,17 @@ function moveNo(x,y){
   let dy=(btnRect.top+btnRect.height/2)-y;
   let mag=Math.hypot(dx,dy)||1;
   dx/=mag; dy/=mag;
-
   let left=clamp((btnRect.left-zoneRect.left)+dx*120,0,zoneRect.width-btnRect.width);
   let top=clamp((btnRect.top-zoneRect.top)+dy*120,0,zoneRect.height-btnRect.height);
-
   noBtn.style.left=left+"px";
   noBtn.style.top=top+"px";
   growYes();
 }
 
-// Floating hearts + move No on pointermove
-zone.addEventListener("pointermove", e=>{
-  spawnHeart(e.clientX,e.clientY);
-  moveNo(e.clientX,e.clientY);
-});
+// Pointermove for hearts and No movement
+zone.addEventListener("pointermove",e=>{ spawnHeart(e.clientX,e.clientY); moveNo(e.clientX,e.clientY); });
 
-// Hint updates on pointerdown near No
+// Hints on click
 const hints=[
   "Looks like “No” is shy like my Sallu 😈",
   "Still running away, huh? 😏",
@@ -242,21 +237,14 @@ const hints=[
   "Just say yes already 😌"
 ];
 let hintIndex=0;
-zone.addEventListener("pointerdown", ()=>{
-  hintIndex=Math.min(hintIndex+1,hints.length-1);
-  hint.textContent=hints[hintIndex];
-});
+zone.addEventListener("pointerdown",()=>{ hintIndex=Math.min(hintIndex+1,hints.length-1); hint.textContent=hints[hintIndex]; });
 
-// Yes button click
+// Yes click
 yesBtn.addEventListener("click", async()=>{
   if("vibrate" in navigator) navigator.vibrate(100);
-  try{ music.volume=0; await music.play(); }catch{}
+  try{music.volume=0; await music.play();}catch{}
   let v=0; const fade=setInterval(()=>{v+=0.05; music.volume=Math.min(v,0.6); if(v>=0.6) clearInterval(fade);},80);
-  zone.style.display="none";
-  hint.style.display="none";
-  result.style.display="block";
-  resizeConfetti();
-  megaConfetti();
+  zone.style.display="none"; hint.style.display="none"; result.style.display="block"; resizeConfetti(); megaConfetti();
 });
 </script>
 </body>
