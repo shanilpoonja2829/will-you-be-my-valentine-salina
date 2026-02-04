@@ -19,10 +19,10 @@ body {
   min-height: 100svh;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start; /* move card from center toward top */
+  padding: 16px;
   font-family: system-ui, sans-serif;
   overflow: hidden;
-  padding: 16px;
   background: #ffeef6;
 }
 
@@ -55,7 +55,8 @@ body {
 
 .card {
   width: min(900px, 92vw);
-  padding: 32px 28px;
+  padding: 28px 28px;   /* slightly slimmer vertical padding */
+  margin-top: 80px;      /* pushes card lower */
   background: var(--card);
   backdrop-filter: blur(10px);
   border-radius: 22px;
@@ -74,7 +75,7 @@ h1 {
   justify-content: space-around;
   align-items: center;
   width: 100%;
-  height: 170px;
+  height: 150px; /* slightly shorter */
   margin: 0 auto;
   touch-action: none;
   position: relative;
@@ -90,7 +91,7 @@ button {
   cursor: pointer;
   box-shadow: 0 10px 24px rgba(0,0,0,.14);
   user-select: none;
-  transition: transform 0.2s ease, left 0.3s ease, top 0.3s ease; /* smooth scaling */
+  transition: transform 0.2s ease, left 0.3s ease, top 0.3s ease; 
   white-space: nowrap;
 }
 
@@ -201,7 +202,7 @@ yesBtn.classList.add("pulsing");
 // Yes growth
 let yesScale = 1;
 function growYes() {
-  yesScale = Math.min(2.5, yesScale + 0.15); // increases each time
+  yesScale = Math.min(2.5, yesScale + 0.15);
   yesBtn.style.transform = `scale(${yesScale})`;
 }
 
@@ -258,9 +259,8 @@ zone.addEventListener("pointermove", e => {
   );
 
   if (distance < 100) {
-    growYes(); // Yes grows each time cursor approaches No
+    growYes(); 
 
-    // dodge No button
     const zoneRect = zone.getBoundingClientRect();
     let dx = (btnRect.left + btnRect.width/2) - e.clientX;
     let dy = (btnRect.top + btnRect.height/2) - e.clientY;
@@ -287,14 +287,12 @@ zone.addEventListener("pointermove", e => {
   }
 });
 
-// No hover updates hint & grows Yes
 noBtn.addEventListener("mouseenter", () => {
   hintIndex = Math.min(hints.length - 1, hintIndex + 1);
   hint.textContent = hints[hintIndex];
   growYes();
 });
 
-// Yes click
 yesBtn.addEventListener("click", async ()=>{
   if("vibrate" in navigator) navigator.vibrate(100);
   try{music.volume=0; await music.play();}catch{}
