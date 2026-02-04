@@ -24,15 +24,17 @@ body {
   font-family: system-ui, sans-serif;
   overflow:hidden;
   position: relative;
+  /* Background image */
   background: url('us.jpg') center/cover no-repeat;
 }
 
+/* Optional soft gradient overlay */
 body::before {
   content:"";
   position: fixed;
   inset:0;
   background: radial-gradient(circle at top, var(--bg2), var(--bg1));
-  opacity:0.4;
+  opacity:0.2;
   pointer-events:none;
   z-index:0;
 }
@@ -63,44 +65,32 @@ h1 {
 
 .button-zone {
   position: relative;
-  width: min(520px, 92%);
+  width: 100%;
   height: 170px;
   margin:0 auto;
 }
 
-button {
-  position: absolute;
-  top:50%;
-  transform: translateY(-50%) scale(1);
-  padding:16px 26px;
-  font-size:18px;
-  font-weight:800;
-  border-radius:999px;
-  border:none;
-  cursor:pointer;
-  box-shadow:0 10px 24px rgba(0,0,0,.14);
-  user-select:none;
-  transition: transform 0.15s ease;
-}
-
+/* Yes wrapper */
 #yesWrapper {
   position: absolute;
-  left: 15%;
-  top: 50%;
-  transform: translateY(-50%) scale(1);
+  top:50%;
+  left: 20%;
+  transform: translate(-50%,-50%) scale(1);
 }
 
+/* Yes button inside wrapper */
 #yesBtn {
   display:block;
-  width:100%;
   background: var(--yes);
-  color:#fff;
-  border-radius:999px;
-  padding:16px 26px;
+  color: #fff;
+  border-radius: 999px;
+  padding: 16px 30px;
   font-size:18px;
   font-weight:800;
   cursor:pointer;
   animation: yesPulse 1.2s ease-in-out infinite;
+  min-width:80px;
+  text-align:center;
 }
 
 @keyframes yesPulse {
@@ -108,17 +98,25 @@ button {
   50% { transform: scale(1.06); }
 }
 
+/* No button */
 #noBtn {
+  position: absolute;
+  top:50%;
   left: 60%;
-  top: 50%;
-  background:#e5e7eb;
+  transform: translate(-50%, -50%);
+  background: #e5e7eb;
   color:#111827;
+  border-radius:999px;
+  padding:16px 30px;
+  font-size:18px;
+  font-weight:800;
+  cursor:pointer;
 }
 
 .hint {
   margin-top:10px;
   font-size:13px;
-  opacity:0.75;
+  opacity:0.85;
 }
 
 .result {
@@ -138,13 +136,14 @@ button {
 .heart {
   position: fixed;
   pointer-events: none;
-  font-size:18px;
-  animation: floatUp 1s ease forwards;
+  font-size:24px;
+  animation: floatUp 1.2s ease forwards;
+  opacity:1;
 }
 
 @keyframes floatUp {
-  from { transform: translate(-50%,-50%) scale(1); opacity:1; }
-  to { transform: translate(-50%,-120%) scale(1.6); opacity:0; }
+  0% { transform: translate(-50%,-50%) scale(1); opacity:1; }
+  100% { transform: translate(-50%,-120%) scale(1.8); opacity:1; }
 }
 </style>
 </head>
@@ -157,8 +156,8 @@ button {
 <h1>Salina, my jaan, will you be my Valentine?</h1>
 
 <section class="button-zone" id="zone">
-  <div id="yesWrapper"><button id="yesBtn" aria-label="Yes, I will">Yes</button></div>
-  <button id="noBtn" aria-label="No, I won't">No</button>
+  <div id="yesWrapper"><button id="yesBtn">Yes</button></div>
+  <button id="noBtn">No</button>
 </section>
 
 <div class="hint" id="hint">Looks like “No” is shy like my Sallu 😈</div>
@@ -166,7 +165,7 @@ button {
 <section class="result" id="result" aria-live="polite">
   <h2>YAY, BABY! 💖</h2>
   <p class="love-note">
-    You make the ordinary feel magical. Every smile, every moment - I want to choose you, always. So this is the part where I smile like an idiot because you said yes 💕
+   You make the ordinary feel magical. Every smile, every moment - I want to choose you, always. So this is the part where I smile like an idiot because you said yes 💕
   </p>
   <img src="https://media.giphy.com/media/3rgXBxX4myufzT6N2w/giphy.gif" alt="Celebration" style="width:90%;max-width:360px;margin-top:10px"/>
 </section>
@@ -183,8 +182,12 @@ const music=document.getElementById("bgMusic");
 const confettiCanvas=document.getElementById("confettiCanvas");
 
 let yesScale=1;
-function growYes(){ yesScale=Math.min(2.5,yesScale+0.15); yesWrapper.style.transform=`translateY(-50%) scale(${yesScale})`; }
+function growYes(){
+  yesScale=Math.min(2.5,yesScale+0.15);
+  yesWrapper.style.transform=`translate(-50%,-50%) scale(${yesScale})`;
+}
 
+// Floating hearts
 let heartsCount=0;
 function spawnHeart(x,y){
   if(heartsCount>30) return;
@@ -195,10 +198,10 @@ function spawnHeart(x,y){
   h.style.left=x+"px";
   h.style.top=y+"px";
   document.body.appendChild(h);
-  setTimeout(()=>{h.remove();heartsCount--;},1000);
+  setTimeout(()=>{h.remove();heartsCount--;},1200);
 }
 
-// Confetti
+// Confetti setup
 function resizeConfetti(){
   const dpr=devicePixelRatio||1;
   confettiCanvas.width=innerWidth*dpr;
@@ -209,7 +212,7 @@ resizeConfetti(); addEventListener("resize",resizeConfetti);
 const confettiInstance=confetti.create(confettiCanvas,{resize:false,useWorker:true});
 function megaConfetti(){ const end=Date.now()+3000; (function frame(){ confettiInstance({particleCount:18,spread:120,startVelocity:55,shapes:["heart"],colors:["#ff4d7d","#ff1f68","#ff9bb8","#ffd1dc"],origin:{x:Math.random(),y:Math.random()*0.4}}); if(Date.now()<end) requestAnimationFrame(frame); })(); }
 
-// Move No
+// Move No button
 function clamp(n,min,max){return Math.max(min,Math.min(max,n));}
 function moveNo(x,y){
   const zoneRect=zone.getBoundingClientRect();
@@ -225,10 +228,10 @@ function moveNo(x,y){
   growYes();
 }
 
-// Pointermove for hearts and No movement
-zone.addEventListener("pointermove",e=>{ spawnHeart(e.clientX,e.clientY); moveNo(e.clientX,e.clientY); });
+// Pointermove for hearts
+zone.addEventListener("pointermove",e=>{ spawnHeart(e.clientX,e.clientY); });
 
-// Hints on click
+// Click in zone to move No and update hint
 const hints=[
   "Looks like “No” is shy like my Sallu 😈",
   "Still running away, huh? 😏",
@@ -237,9 +240,13 @@ const hints=[
   "Just say yes already 😌"
 ];
 let hintIndex=0;
-zone.addEventListener("pointerdown",()=>{ hintIndex=Math.min(hintIndex+1,hints.length-1); hint.textContent=hints[hintIndex]; });
+zone.addEventListener("pointerdown",e=>{
+  hintIndex=Math.min(hintIndex+1,hints.length-1);
+  hint.textContent=hints[hintIndex];
+  moveNo(e.clientX,e.clientY);
+});
 
-// Yes click
+// Yes button click
 yesBtn.addEventListener("click", async()=>{
   if("vibrate" in navigator) navigator.vibrate(100);
   try{music.volume=0; await music.play();}catch{}
