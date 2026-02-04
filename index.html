@@ -185,11 +185,14 @@ const hints = [
 ];
 let hintIndex = 0;
 
-function updateHint() {
-  hintIndex = Math.min(hintIndex + 1, hints.length - 1);
-  hint.textContent = hints[hintIndex];
+let yesScale = 1;
+function growYes() {
+  yesScale = Math.min(2.5, yesScale + 0.15); 
+  yesBtn.style.transform = `translateY(-50%) scale(${yesScale})`;
+  yesBtn.classList.add("pulsing");
 }
 
+// Floating hearts trail
 let heartsCount = 0;
 function spawnHeart(x, y) {
   if (heartsCount > 30) return;
@@ -203,10 +206,12 @@ function spawnHeart(x, y) {
   setTimeout(() => { h.remove(); heartsCount--; }, 1000);
 }
 
+// Vibration
 function heartbeat() {
   if ("vibrate" in navigator) navigator.vibrate(100);
 }
 
+// Confetti canvas setup
 function resizeConfetti() {
   const dpr = devicePixelRatio || 1;
   confettiCanvas.width = innerWidth * dpr;
@@ -236,49 +241,45 @@ function megaConfetti() {
   })();
 }
 
-let yesScale = 1;
-function growYes() {
-  yesScale = Math.min(1.5, yesScale + 0.08);
-  yesBtn.style.transform = `translateY(-50%) scale(${yesScale})`;
-  yesBtn.classList.add("pulsing");
-}
-
+// Clamp helper
 function clamp(n, min, max) {
   return Math.max(min, Math.min(max, n));
 }
 
-function moveNo(x, y) {
-  const z = zone.getBoundingClientRect();
-  const b = noBtn.getBoundingClientRect();
-
-  let dx = (b.left + b.width/2) - x;
-  let dy = (b.top + b.height/2) - y;
-  let mag = Math.hypot(dx, dy) || 1;
-  dx /= mag; dy /= mag;
-
-  let left = clamp((b.left - z.left) + dx * 180, 0, z.width - b.width);
-  let top  = clamp((b.top - z.top) + dy * 180, 0, z.height - b.height);
-
-  noBtn.style.transform = `translate(${left}px, ${top}px)`;
-
-  growYes();
-  updateHint();
-}
-
-// Throttled pointer move
-let pending = false;
+// Track last pointermove
 let lastEvent;
 zone.addEventListener("pointermove", e => {
   lastEvent = e;
-  spawnHeart(e.clientX, e.clientY);
-  if (pending) return;
-  pending = true;
-  requestAnimationFrame(() => {
-    moveNo(lastEvent.clientX, lastEvent.clientY);
-    pending = false;
-  });
+  spawnHeart(e.clientX, e.clientY); // floating heart trail
 });
 
+// Move No button when user tries to click it
+function moveNo(clickX, clickY) {
+  const zoneRect = zone.getBoundingClientRect();
+  const btnRect = noBtn.getBoundingClientRect();
+
+  let dx = (btnRect.left + btnRect.width/2) - clickX;
+  let dy = (btnRect.top + btnRect.height/2) - clickY;
+  let mag = Math.hypot(dx, dy) || 1;
+  dx /= mag; dy /= mag;
+
+  let left = clamp((btnRect.left - zoneRect.left) + dx * 180, 0, zoneRect.width - btnRect.width);
+  let top  = clamp((btnRect.top - zoneRect.top) + dy * 180, 0, zoneRect.height - btnRect.height);
+
+  noBtn.style.left = left + "px";
+  noBtn.style.top  = top + "px";
+
+  growYes();
+}
+
+// Update hint and move No when user clicks near No
+noBtn.addEventListener("pointerdown", () => {
+  hintIndex = Math.min(hintIndex + 1, hints.length - 1);
+  hint.textContent = hints[hintIndex];
+  if(lastEvent) moveNo(lastEvent.clientX, lastEvent.clientY);
+});
+
+// Yes button click
 yesBtn.addEventListener("click", async () => {
   heartbeat();
 
