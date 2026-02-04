@@ -9,7 +9,7 @@
 :root {
   --bg1: #ffd6e7;
   --bg2: #ffeef6;
-  --card: rgba(255,255,255,0.6); /* more transparent */
+  --card: rgba(255,255,255,0.4); /* more transparent */
   --yes: #ff3b7a;
 }
 
@@ -31,7 +31,7 @@ body {
   inset: 0;
   background-image: url('./Us.JPG'); /* make sure Us.JPG is in same folder */
   background-size: cover;
-  background-position: top center; /* shift focus to top */
+  background-position: center 25%; /* slightly shifted down */
   background-repeat: no-repeat;
   z-index: -2;
 }
@@ -90,7 +90,7 @@ button {
   cursor: pointer;
   box-shadow: 0 10px 24px rgba(0,0,0,.14);
   user-select: none;
-  transition: transform 0.2s ease, left 0.3s ease, top 0.3s ease; /* smooth scaling */
+  transition: transform 0.2s ease, left 0.3s ease, top 0.3s ease; /* smooth scale */
   white-space: nowrap;
 }
 
@@ -201,8 +201,8 @@ yesBtn.classList.add("pulsing");
 // Yes growth
 let yesScale = 1;
 function growYes() {
-  yesScale = Math.min(2.5, yesScale + 0.15);
-  yesBtn.style.transform = `scale(${yesScale})`; // fixed
+  yesScale = Math.min(2.5, yesScale + 0.1); // smaller increments for smooth growth
+  yesBtn.style.transform = `scale(${yesScale})`; 
 }
 
 // Floating hearts
@@ -282,16 +282,17 @@ zone.addEventListener("pointermove", e => {
       if (t < 1) requestAnimationFrame(animate);
     }
     requestAnimationFrame(animate);
-
-    growYes(); // yes button grows when No dodges
   }
 });
 
-// Handle No button click attempts (update hint & dodge)
+// Handle No button hover (update hint and grow Yes)
 noBtn.addEventListener("mouseenter", () => {
-  // update hint only when user attempts to interact
+  // update hint only on hover
   hintIndex = Math.min(hints.length - 1, hintIndex + 1);
   hint.textContent = hints[hintIndex];
+
+  // grow Yes button
+  growYes();
 });
 
 // Yes click
