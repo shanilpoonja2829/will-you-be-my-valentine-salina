@@ -185,11 +185,13 @@ const hints = [
 ];
 let hintIndex = 0;
 
+// Start pulsing immediately
+yesBtn.classList.add("pulsing");
+
 let yesScale = 1;
 function growYes() {
   yesScale = Math.min(2.5, yesScale + 0.15); 
   yesBtn.style.transform = `translateY(-50%) scale(${yesScale})`;
-  yesBtn.classList.add("pulsing");
 }
 
 // Floating hearts trail
