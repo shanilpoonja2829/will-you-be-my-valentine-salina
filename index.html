@@ -63,7 +63,7 @@ body {
   text-align: center;
   box-shadow: 0 18px 60px rgba(0,0,0,.15);
   position: relative;
-  transform: translateY(8vh); /* slightly lower */
+  transform: translateY(8vh);
 }
 
 h1 {
@@ -199,9 +199,9 @@ const confettiCanvas = document.getElementById("confettiCanvas");
 
 const hints = [
   "Looks like “No” is shy like my Sallu 😈",
-  "Still running away, huh babe? 😏",
-  "Okay now you’re teasing me jaan 💕",
-  "At this point it’s destiny beautiful 💘",
+  "Still running away, huh? 😏",
+  "Okay now you’re teasing 💕",
+  "At this point it’s destiny 💘",
   "Just say yes already 😌"
 ];
 let hintIndex = 0;
@@ -239,20 +239,22 @@ function resizeConfetti(){
 resizeConfetti();
 addEventListener("resize",resizeConfetti);
 
-const confettiInstance = confetti.create(confettiCanvas, {resize:false, useWorker:true});
+// Use worker false for proper animation
+const confettiInstance = confetti.create(confettiCanvas, {resize: false, useWorker: false});
+
 function megaConfetti(){
-  const end=Date.now()+3000;
-  (function frame(){
+  const end = Date.now() + 3000;
+  const interval = setInterval(() => {
     confettiInstance({
-      particleCount:18,
-      spread:120,
-      startVelocity:55,
-      shapes:["circle"], // works
-      colors:["#ff4d7d","#ff1f68","#ff9bb8","#ffd1dc"],
-      origin:{x:Math.random(),y:Math.random()*0.4}
+      particleCount: 18,
+      spread: 120,
+      startVelocity: 55,
+      shapes: ["circle"],
+      colors: ["#ff4d7d","#ff1f68","#ff9bb8","#ffd1dc"],
+      origin: { x: Math.random(), y: Math.random() * 0.4 }
     });
-    if(Date.now()<end) requestAnimationFrame(frame);
-  })();
+    if(Date.now() > end) clearInterval(interval);
+  }, 100);
 }
 
 function clamp(n,min,max){return Math.max(min, Math.min(max,n));}
@@ -303,9 +305,9 @@ noBtn.addEventListener("mouseenter", () => {
 });
 
 // YES button click
-yesBtn.addEventListener("click", async ()=>{
+yesBtn.addEventListener("click", async ()=> {
   if("vibrate" in navigator) navigator.vibrate(100);
-  try { music.volume = 0; await music.play(); } catch{}
+  try { music.volume = 0; await music.play(); } catch {}
   let v=0;
   const fade = setInterval(()=>{
     v += 0.05;
