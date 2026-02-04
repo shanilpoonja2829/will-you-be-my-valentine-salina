@@ -1,11 +1,10 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Salina, my jaan, will you be my Valentine?</title>
 
-<!-- Load confetti with defer -->
 <script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
 <style>
@@ -227,14 +226,15 @@ window.addEventListener("load", () => {
     setTimeout(() => { h.remove(); heartsCount--; }, 1200);
   }
 
+  /* ADDITION 1: heart burst (uses existing hearts only) */
   function heartBurst(x,y){
-    for(let i=0;i<18;i++){
+    for(let i=0;i<16;i++){
       setTimeout(() => {
         spawnHeart(
           x + (Math.random()-0.5)*120,
           y + (Math.random()-0.5)*120
         );
-      }, i*25);
+      }, i*30);
     }
   }
 
@@ -249,16 +249,15 @@ window.addEventListener("load", () => {
 
   const confettiInstance = confetti.create(confettiCanvas, { resize:false, useWorker:false });
 
+  /* ADDITION 2: more confetti (same function, just stronger) */
   function megaConfetti(){
     const end = Date.now() + 4500;
     (function frame(){
       confettiInstance({
-        particleCount: 35,
+        particleCount: 40,
         spread: 140,
         startVelocity: 60,
-        decay: 0.92,
-        gravity: 0.9,
-        colors: ["#ff4d7d","#ff1f68","#ff9bb8","#ffd1dc","#ffc1d9"],
+        colors: ["#ff4d7d","#ff1f68","#ff9bb8","#ffd1dc"],
         origin: { x: Math.random(), y: Math.random()*0.5 }
       });
       if(Date.now() < end) requestAnimationFrame(frame);
@@ -297,6 +296,8 @@ window.addEventListener("load", () => {
     zone.style.display = "none";
     hint.style.display = "none";
     result.style.display = "block";
+
+    /* ADDITION 3: hearts + more confetti */
     heartBurst(innerWidth/2, innerHeight/2);
     megaConfetti();
   });
