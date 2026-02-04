@@ -26,21 +26,16 @@ body {
   background: #ffeef6;
 }
 
-/* Background container */
 .bg {
   position: fixed;
   inset: 0;
-  overflow: hidden;
+  background-image: url('./Us.JPG'); /* place Us.JPG in same folder */
+  background-size: cover;
+  background-position: center top; /* anchor to top to show heads */
+  background-repeat: no-repeat;
   z-index: -2;
 }
-.bg img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain; /* whole image visible */
-  object-position: top center; /* anchor faces at top */
-}
 
-/* Gradient overlay */
 .bg-gradient {
   position: fixed;
   inset: 0;
@@ -91,7 +86,7 @@ button {
   cursor:pointer;
   box-shadow:0 10px 24px rgba(0,0,0,.14);
   user-select:none;
-  transition: left 0.3s ease, top 0.3s ease, transform 0.15s ease;
+  transition: transform 0.15s ease, left 0.3s ease, top 0.3s ease;
   white-space: nowrap;
 }
 
@@ -154,9 +149,7 @@ button {
 </style>
 </head>
 <body>
-<div class="bg">
-  <img src="./Us.JPG" alt="Us">
-</div>
+<div class="bg"></div>
 <div class="bg-gradient"></div>
 <canvas id="confettiCanvas"></canvas>
 
@@ -199,8 +192,15 @@ const hints = [
 ];
 let hintIndex = 0;
 
-// Start pulsing Yes button text
+// Start pulsing Yes
 yesBtn.classList.add("pulsing");
+
+// Yes growth
+let yesScale = 1;
+function growYes(scaleStep = 0.05){
+  yesScale = Math.min(2.5, yesScale + scaleStep);
+  yesBtn.style.transform = `translateY(-50%) scale(${yesScale})`;
+}
 
 // Floating hearts
 let heartsCount = 0;
@@ -255,19 +255,20 @@ zone.addEventListener("pointermove", e => {
   const dy = e.clientY - (btnRect.top + btnRect.height/2);
   const distance = Math.hypot(dx, dy);
 
-  // Scale Yes button smoothly based on proximity
-  let scaleFactor = clamp(2 - distance/120, 1, 2.5); // min 1, max 2.5
-  yesBtn.style.transform = `translateY(-50%) scale(${scaleFactor})`;
-
-  // Move No button if close
-  if(distance < 120){
+  if(distance < 120){ // proximity threshold
+    // Move No button away from cursor
     let moveX = -dx*1.5;
     let moveY = -dy*1.5;
     let newLeft = clamp(btnRect.left - zoneRect.left + moveX, 0, zoneRect.width - btnRect.width);
     let newTop  = clamp(btnRect.top - zoneRect.top + moveY, 0, zoneRect.height - btnRect.height);
+
     noBtn.style.left = `${newLeft}px`;
     noBtn.style.top  = `${newTop}px`;
+
+    // Grow Yes button
+    growYes();
     
+    // Update hint
     hintIndex = Math.min(hintIndex+1, hints.length-1);
     hint.textContent = hints[hintIndex];
   }
