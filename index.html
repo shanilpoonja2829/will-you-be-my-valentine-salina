@@ -1,174 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Salina, my jaan, will you be my Valentine?</title>
-
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
-
-<style>
-:root {
-  --bg1: #ffd6e7;
-  --bg2: #ffeef6;
-  --card: #ffffffcc;
-  --yes: #ff3b7a;
-}
-
-* { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  min-height: 100svh;
-  display: grid;
-  place-items: center;
-
-  /* Background gradient + image */
-  background: 
-    radial-gradient(circle at top, var(--bg2), var(--bg1)),
-    url('us.jpg') center/cover no-repeat;
-  background-blend-mode: lighten; /* blend gradient and photo nicely */
-  font-family: system-ui, sans-serif;
-  overflow: hidden;
-  padding: 16px;
-}
-
-#confettiCanvas {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9999;
-}
-
-.card {
-  width: min(720px, 92vw);
-  padding: 26px 22px;
-  background: rgba(255,255,255,0.85); /* slightly transparent to show background */
-  backdrop-filter: blur(10px);
-  border-radius: 22px;
-  text-align: center;
-  box-shadow: 0 18px 60px rgba(0,0,0,.15);
-}
-
-h1 {
-  font-size: clamp(26px, 4vw, 44px);
-  margin: 12px 0 18px;
-}
-
-.button-zone {
-  position: relative;
-  width: min(520px, 92%);
-  height: 170px;
-  margin: 0 auto;
-  touch-action: none;
-}
-
-button {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  padding: 16px 26px;
-  font-size: 18px;
-  font-weight: 800;
-  border-radius: 999px;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 10px 24px rgba(0,0,0,.14);
-  user-select: none;
-  transition: transform 0.15s ease;
-}
-
-#yesBtn {
-  left: 15%;
-  background: var(--yes);
-  color: #fff;
-  overflow: visible;
-}
-
-/* Pulsing animation */
-#yesBtn.pulsing {
-  animation: yesPulse 1.2s ease-in-out infinite;
-}
-
-/* Pulse keyframes */
-@keyframes yesPulse {
-  0%, 100% { transform: translateY(-50%) scale(1); }
-  50%      { transform: translateY(-50%) scale(1.06); }
-}
-
-/* Sparkles behind Yes button */
-#yesBtn::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 120%;
-  height: 120%;
-  background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
-  transform: translate(-50%, -50%) scale(0);
-  border-radius: 50%;
-  pointer-events: none;
-  opacity: 0.8;
-  animation: sparkle 1.2s ease-in-out infinite;
-}
-
-/* Sparkle animation */
-@keyframes sparkle {
-  0%, 100% { transform: translate(-50%, -50%) scale(0); opacity: 0.4; }
-  50%      { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; }
-}
-
-#noBtn {
-  left: 60%;
-  background: #e5e7eb;
-  color: #111827;
-  pointer-events: none;
-}
-
-.hint {
-  margin-top: 10px;
-  font-size: 13px;
-  opacity: .75;
-}
-
-.result {
-  display: none;
-  margin-top: 18px;
-  animation: pop .4s ease;
-}
-
-.love-note {
-  font-size: 18px;
-  margin-top: 12px;
-  line-height: 1.5;
-}
-
-@keyframes pop {
-  from { transform: scale(.96); opacity: 0; }
-  to   { transform: scale(1); opacity: 1; }
-}
-
-/* Floating hearts */
-.heart {
-  position: fixed;
-  pointer-events: none;
-  font-size: 18px;
-  animation: floatUp 1s ease forwards;
-}
-
-@keyframes floatUp {
-  from {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 1;
-  }
-  to {
-    transform: translate(-50%, -120%) scale(1.6);
-    opacity: 0;
-  }
-}
-</style>
-</head>
-
 <body>
 <canvas id="confettiCanvas"></canvas>
 
@@ -206,25 +35,15 @@ const hint = document.getElementById("hint");
 const music = document.getElementById("bgMusic");
 const confettiCanvas = document.getElementById("confettiCanvas");
 
-const hints = [
-  "Looks like “No” is shy like my Sallu 😈",
-  "Still running away, huh? 😏",
-  "Okay now you’re teasing 💕",
-  "At this point it’s destiny 💘",
-  "Just say yes already 😌"
-];
-let hintIndex = 0;
-
-// Start pulsing immediately
+// Yes button pulsing
 yesBtn.classList.add("pulsing");
-
 let yesScale = 1;
 function growYes() {
-  yesScale = Math.min(2.5, yesScale + 0.15); 
+  yesScale = Math.min(2.5, yesScale + 0.15);
   yesBtn.style.transform = `translateY(-50%) scale(${yesScale})`;
 }
 
-// Floating hearts trail
+// Hearts
 let heartsCount = 0;
 function spawnHeart(x, y) {
   if (heartsCount > 30) return;
@@ -238,12 +57,7 @@ function spawnHeart(x, y) {
   setTimeout(() => { h.remove(); heartsCount--; }, 1000);
 }
 
-// Vibration
-function heartbeat() {
-  if ("vibrate" in navigator) navigator.vibrate(100);
-}
-
-// Confetti canvas setup
+// Confetti
 function resizeConfetti() {
   const dpr = devicePixelRatio || 1;
   confettiCanvas.width = innerWidth * dpr;
@@ -253,87 +67,67 @@ function resizeConfetti() {
 resizeConfetti();
 addEventListener("resize", resizeConfetti);
 
-const confettiInstance = confetti.create(confettiCanvas, {
-  resize: false,
-  useWorker: true
-});
-
+const confettiInstance = confetti.create(confettiCanvas, {resize:false, useWorker:true});
 function megaConfetti() {
   const end = Date.now() + 3000;
   (function frame() {
-    confettiInstance({
-      particleCount: 18,
-      spread: 120,
-      startVelocity: 55,
-      shapes: ["heart"],
-      colors: ["#ff4d7d","#ff1f68","#ff9bb8","#ffd1dc"],
-      origin: { x: Math.random(), y: Math.random() * 0.4 }
-    });
-    if (Date.now() < end) requestAnimationFrame(frame);
+    confettiInstance({ particleCount:18, spread:120, startVelocity:55, shapes:["heart"], colors:["#ff4d7d","#ff1f68","#ff9bb8","#ffd1dc"], origin:{x:Math.random(),y:Math.random()*0.4}});
+    if(Date.now()<end) requestAnimationFrame(frame);
   })();
 }
 
-// Clamp helper
-function clamp(n, min, max) {
-  return Math.max(min, Math.min(max, n));
-}
-
-// Track last pointermove
-let lastEvent;
-zone.addEventListener("pointermove", e => {
-  lastEvent = e;
-  spawnHeart(e.clientX, e.clientY); // floating heart trail
-});
-
-// Move No button when user clicks near it
-function moveNo(clickX, clickY) {
+// Move No button
+function clamp(n,min,max){return Math.max(min,Math.min(max,n));}
+function moveNo(x,y){
   const zoneRect = zone.getBoundingClientRect();
   const btnRect = noBtn.getBoundingClientRect();
 
-  let dx = (btnRect.left + btnRect.width/2) - clickX;
-  let dy = (btnRect.top + btnRect.height/2) - clickY;
-  let mag = Math.hypot(dx, dy) || 1;
-  dx /= mag; dy /= mag;
+  let dx = (btnRect.left + btnRect.width/2) - x;
+  let dy = (btnRect.top + btnRect.height/2) - y;
+  let mag = Math.hypot(dx,dy)||1;
+  dx/=mag; dy/=mag;
 
-  let left = clamp((btnRect.left - zoneRect.left) + dx * 180, 0, zoneRect.width - btnRect.width);
-  let top  = clamp((btnRect.top - zoneRect.top) + dy * 180, 0, zoneRect.height - btnRect.height);
+  let left = clamp((btnRect.left - zoneRect.left) + dx*180, 0, zoneRect.width-btnRect.width);
+  let top  = clamp((btnRect.top - zoneRect.top) + dy*180, 0, zoneRect.height-btnRect.height);
 
   noBtn.style.left = left + "px";
-  noBtn.style.top  = top + "px";
+  noBtn.style.top = top + "px";
 
   growYes();
 }
 
-// Update hint and move No when user clicks near No
-noBtn.addEventListener("pointerdown", () => {
-  hintIndex = Math.min(hintIndex + 1, hints.length - 1);
-  hint.textContent = hints[hintIndex];
-  if(lastEvent) moveNo(lastEvent.clientX, lastEvent.clientY);
+// Pointer move triggers floating hearts + No button movement
+zone.addEventListener("pointermove", e => {
+  spawnHeart(e.clientX, e.clientY);
+  moveNo(e.clientX, e.clientY);
 });
 
-// Yes button click
+// Hint updates on clicking No
+const hints = [
+  "Looks like “No” is shy like my Sallu 😈",
+  "Still running away, huh? 😏",
+  "Okay now you’re teasing 💕",
+  "At this point it’s destiny 💘",
+  "Just say yes already 😌"
+];
+let hintIndex = 0;
+noBtn.addEventListener("pointerdown", () => {
+  hintIndex = Math.min(hintIndex + 1, hints.length-1);
+  hint.textContent = hints[hintIndex];
+});
+
+// Yes click
 yesBtn.addEventListener("click", async () => {
-  heartbeat();
+  if("vibrate" in navigator) navigator.vibrate(100);
+  try { music.volume=0; await music.play(); } catch {}
+  let v=0; const fade=setInterval(()=>{ v+=0.05; music.volume=Math.min(v,0.6); if(v>=0.6) clearInterval(fade); },80);
 
-  try {
-    music.volume = 0;
-    await music.play();
-  } catch {}
-
-  let v = 0;
-  const fade = setInterval(() => {
-    v += 0.05;
-    music.volume = Math.min(v, 0.6);
-    if (v >= 0.6) clearInterval(fade);
-  }, 80);
-
-  zone.style.display = "none";
-  hint.style.display = "none";
-  result.style.display = "block";
+  zone.style.display="none";
+  hint.style.display="none";
+  result.style.display="block";
 
   resizeConfetti();
   megaConfetti();
 });
 </script>
 </body>
-</html>
