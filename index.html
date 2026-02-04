@@ -19,7 +19,7 @@ body {
   min-height: 100svh;
   display: flex;
   justify-content: center;
-  align-items: center; /* vertical centering */
+  align-items: center;
   font-family: system-ui, sans-serif;
   overflow: hidden;
   padding: 16px;
@@ -53,7 +53,7 @@ body {
   z-index: 9999;
 }
 
-/* Card styling with responsive downward shift */
+/* Card styling */
 .card {
   width: min(900px, 92vw);
   padding: 32px 28px;
@@ -63,7 +63,7 @@ body {
   text-align: center;
   box-shadow: 0 18px 60px rgba(0,0,0,.15);
   position: relative;
-  transform: translateY(7vh); /* move card down 5% of viewport height */
+  transform: translateY(8vh); /* slightly lower */
 }
 
 h1 {
@@ -80,6 +80,12 @@ h1 {
   margin: 0 auto;
   touch-action: none;
   position: relative;
+}
+
+/* Wrapper for Yes button to allow JS scaling */
+#yesWrapper {
+  display: inline-block;
+  transition: transform 0.2s ease;
 }
 
 button {
@@ -164,7 +170,9 @@ button {
   <h1>Salina, my jaan, will you be my Valentine?</h1>
 
   <section class="button-zone" id="zone">
-    <button id="yesBtn" aria-label="Yes, I will">Yes</button>
+    <div id="yesWrapper">
+      <button id="yesBtn" aria-label="Yes, I will">Yes</button>
+    </div>
     <button id="noBtn" aria-label="No, I won't">No</button>
   </section>
 
@@ -182,6 +190,7 @@ button {
 <script>
 const zone = document.getElementById("zone");
 const yesBtn = document.getElementById("yesBtn");
+const yesWrapper = document.getElementById("yesWrapper");
 const noBtn = document.getElementById("noBtn");
 const result = document.getElementById("result");
 const hint = document.getElementById("hint");
@@ -190,21 +199,23 @@ const confettiCanvas = document.getElementById("confettiCanvas");
 
 const hints = [
   "Looks like “No” is shy like my Sallu 😈",
-  "Still running away, huh? 😏",
-  "Okay now you’re teasing 💕",
-  "At this point it’s destiny 💘",
+  "Still running away, huh babe? 😏",
+  "Okay now you’re teasing me jaan 💕",
+  "At this point it’s destiny beautiful 💘",
   "Just say yes already 😌"
 ];
 let hintIndex = 0;
 
 yesBtn.classList.add("pulsing");
 
+// YES button growth
 let yesScale = 1;
 function growYes() {
   yesScale = Math.min(2.5, yesScale + 0.15);
-  yesBtn.style.transform = `scale(${yesScale})`;
+  yesWrapper.style.transform = `scale(${yesScale})`;
 }
 
+// Floating hearts
 let heartsCount = 0;
 function spawnHeart(x,y){
   if(heartsCount>30) return;
@@ -218,6 +229,7 @@ function spawnHeart(x,y){
   setTimeout(()=>{h.remove();heartsCount--;},1200);
 }
 
+// Confetti setup
 function resizeConfetti(){
   const dpr=devicePixelRatio||1;
   confettiCanvas.width=innerWidth*dpr;
@@ -226,7 +238,8 @@ function resizeConfetti(){
 }
 resizeConfetti();
 addEventListener("resize",resizeConfetti);
-const confettiInstance = confetti.create(confettiCanvas,{resize:false,useWorker:true});
+
+const confettiInstance = confetti.create(confettiCanvas, {resize:false, useWorker:true});
 function megaConfetti(){
   const end=Date.now()+3000;
   (function frame(){
@@ -234,7 +247,7 @@ function megaConfetti(){
       particleCount:18,
       spread:120,
       startVelocity:55,
-      shapes:["heart"],
+      shapes:["circle"], // works
       colors:["#ff4d7d","#ff1f68","#ff9bb8","#ffd1dc"],
       origin:{x:Math.random(),y:Math.random()*0.4}
     });
@@ -244,6 +257,7 @@ function megaConfetti(){
 
 function clamp(n,min,max){return Math.max(min, Math.min(max,n));}
 
+// No button hover logic
 zone.addEventListener("pointermove", e => {
   spawnHeart(e.clientX, e.clientY);
 
@@ -254,7 +268,7 @@ zone.addEventListener("pointermove", e => {
   );
 
   if (distance < 100) {
-    growYes(); 
+    growYes();
 
     const zoneRect = zone.getBoundingClientRect();
     let dx = (btnRect.left + btnRect.width/2) - e.clientX;
@@ -288,22 +302,22 @@ noBtn.addEventListener("mouseenter", () => {
   growYes();
 });
 
+// YES button click
 yesBtn.addEventListener("click", async ()=>{
   if("vibrate" in navigator) navigator.vibrate(100);
-  try{music.volume=0; await music.play();}catch{}
+  try { music.volume = 0; await music.play(); } catch{}
   let v=0;
-  const fade=setInterval(()=>{
-    v+=0.05;
-    music.volume=Math.min(v,0.6);
+  const fade = setInterval(()=>{
+    v += 0.05;
+    music.volume = Math.min(v,0.6);
     if(v>=0.6) clearInterval(fade);
   },80);
-  zone.style.display="none";
-  hint.style.display="none";
-  result.style.display="block";
+  zone.style.display = "none";
+  hint.style.display = "none";
+  result.style.display = "block";
   resizeConfetti();
   megaConfetti();
 });
 </script>
 </body>
 </html>
-
