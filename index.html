@@ -29,9 +29,9 @@ body {
 .bg {
   position: fixed;
   inset: 0;
-  background-image: url('./Us.JPG'); /* make sure Us.JPG is in same folder */
+  background-image: url('./Us.JPG'); /* make sure Us.JPG is in the same folder */
   background-size: cover;
-  background-position: center 39%; /* slightly higher */
+  background-position: center 50px; /* fixed pixel offset from top */
   background-repeat: no-repeat;
   z-index: -2;
 }
@@ -62,6 +62,7 @@ body {
   text-align: center;
   box-shadow: 0 18px 60px rgba(0,0,0,.15);
   position: relative;
+  transform: translateY(20px); /* slightly lower on screen */
 }
 
 h1 {
@@ -90,7 +91,7 @@ button {
   cursor: pointer;
   box-shadow: 0 10px 24px rgba(0,0,0,.14);
   user-select: none;
-  transition: transform 0.2s ease, left 0.3s ease, top 0.3s ease; /* smooth scaling */
+  transition: transform 0.2s ease, left 0.3s ease, top 0.3s ease;
   white-space: nowrap;
 }
 
@@ -313,4 +314,3 @@ yesBtn.addEventListener("click", async ()=>{
 </script>
 </body>
 </html>
-
